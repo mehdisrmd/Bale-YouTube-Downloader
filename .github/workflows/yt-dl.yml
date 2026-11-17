@@ -122,6 +122,19 @@ jobs:
           deno --version
           pip3 install --upgrade yt-dlp --quiet
 
+      # ── Step 4b: YouTube Cookies (from repo secret) ──
+      - name: "🍪 Setup YouTube Cookies"
+        env:
+          YOUTUBE_COOKIES_RAW: ${{ secrets.YOUTUBE_COOKIES }}
+        run: |
+          if [ -n "$YOUTUBE_COOKIES_RAW" ]; then
+            printf '%s' "$YOUTUBE_COOKIES_RAW" > "$HOME/yt-cookies.txt"
+            mkdir -p "$HOME/.config/yt-dlp"
+            printf -- "--cookies %s\n--hls-prefer-native\n" "$HOME/yt-cookies.txt" > "$HOME/.config/yt-dlp/config"
+            echo "✅ Cookies configured"
+          else
+            echo "⚠️ No YOUTUBE_COOKIES secret set — running cookie-free"
+          fi
       # ── Step 5: Setup Parameters ──────────────────────
       - name: "🔧 Setup Download Parameters"
         id: setup
