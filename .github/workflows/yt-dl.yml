@@ -29,6 +29,11 @@ on:
           - 720
           - 480
           - audio
+      audio_bitrate:
+        description: "Audio bitrate kbps (quality=audio)"
+        required: false
+        type: string
+        default: "128"
       download_subtitles:
         description: "📝 Download Subtitles (fa & en)"
         required: false
@@ -281,7 +286,7 @@ jobs:
             echo "  🔄 Method $METHOD..."
             
             if [ "$QUALITY" = "audio" ]; then
-              COMMON_FLAGS="--extract-audio --audio-format mp3 --audio-quality 0 --write-thumbnail --convert-thumbnails jpg --no-cache-dir --output ${TMP_DIR}/%(title)s.%(ext)s --no-part --no-playlist --retries 5 --fragment-retries 5 --no-check-certificates --concurrent-fragments 8 --buffer-size 16K --http-chunk-size 10M --progress --newline"
+              COMMON_FLAGS="--extract-audio --audio-format mp3 --audio-quality ${{ inputs.audio_bitrate }}K --write-thumbnail --convert-thumbnails jpg --no-cache-dir --output ${TMP_DIR}/%(title)s.%(ext)s --no-part --no-playlist --retries 5 --fragment-retries 5 --no-check-certificates --concurrent-fragments 8 --buffer-size 16K --http-chunk-size 10M --progress --newline"
             elif [ "$QUALITY" = "best" ]; then
               COMMON_FLAGS="--merge-output-format mp4 --format-sort res,+codec:vp9.1,+size --write-thumbnail --convert-thumbnails jpg --no-cache-dir --output ${TMP_DIR}/%(title)s.%(ext)s --no-part --no-playlist --retries 5 --fragment-retries 5 --no-check-certificates --concurrent-fragments 8 --buffer-size 16K --http-chunk-size 10M --progress --newline"
             else
